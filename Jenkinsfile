@@ -9,27 +9,37 @@ pipeline {
 
     stages {
 
-        stage('Clonar Repositorio') {
-            steps {
-                git 'https://github.com/MysteryNySory/Pipeline-Python-Jenkins.git'
-            }
-        }
-
         stage('Verificar Python') {
             steps {
                 sh 'python3 --version'
             }
         }
 
+        stage('Criar Ambiente Virtual') {
+            steps {
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                '''
+            }
+        }
+
         stage('Instalar Dependencias') {
             steps {
-                sh 'pip3 install -r requirements.txt'
+                sh '''
+                . venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Executar Testes') {
             steps {
-                sh 'pytest'
+                sh '''
+                . venv/bin/activate
+                pytest
+                '''
             }
         }
 
